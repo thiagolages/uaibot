@@ -4,6 +4,7 @@ import uaibot_cpp_bind as ub_cpp
 import random
 import matplotlib.pyplot as plt
 import pickle
+import os
 
 def param_curve(t, no_agent):
     
@@ -226,12 +227,14 @@ for k in range(k_max):
 ##
 
 data=[hist_t, hist_q, hist_dotq, hist_a, hist_min_dist, hist_feasible]
-# save
-with open("/home/vinicius/Desktop/uaibot_tests/paper_script/data2.pkl", "wb") as f:
+
+# save data
+cwd = os.getcwd()
+with open(os.path.join(cwd, "data.pkl"), "wb") as f:
     pickle.dump(data, f)
 
-
-
+# save sim
+sim.save(cwd,"sim_icuas")
 sim.run()
     
     
