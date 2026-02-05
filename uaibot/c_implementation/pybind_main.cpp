@@ -148,6 +148,21 @@ PYBIND11_MODULE(uaibot_cpp_bind, m) {
          .def_readwrite("lz", &AABB::lz)
          .def_readwrite("p", &AABB::p);
 
+     py::class_<ICUASGVF>(m, "CPP_ICUASGVF")
+         .def(py::init<>())
+         .def_readwrite("D", &ICUASGVF::D)
+         .def_readwrite("vec", &ICUASGVF::vec) 
+         .def_readwrite("min_dist_obs", &ICUASGVF::min_dist_obs)
+         .def_readwrite("feasible", &ICUASGVF::feasible)
+         .def_readwrite("dist_am", &ICUASGVF::dist_am)
+         .def_readwrite("dist_am_next", &ICUASGVF::dist_am_next)
+         .def_readwrite("grad_am", &ICUASGVF::grad_am)
+         .def_readwrite("grad_am_next", &ICUASGVF::grad_am_next)
+         .def_readwrite("ind1_am", &ICUASGVF::ind1_am)
+         .def_readwrite("ind2_am", &ICUASGVF::ind2_am);
+
+
+
      py::class_<GeometricPrimitives>(m, "CPP_GeometricPrimitives")
          .def(py::init<>())
          .def_readwrite("htm", &GeometricPrimitives::htm)
@@ -229,4 +244,30 @@ PYBIND11_MODULE(uaibot_cpp_bind, m) {
      m.def("vectorfield_SE3", &vectorfield_SE3, py::arg("state"), py::arg("curve"), py::arg("kt1"), py::arg("kt2"),
            py::arg("kt3"), py::arg("kn1"), py::arg("kn2"), py::arg("curve_derivative")=std::vector<Eigen::MatrixXd>(),
            py::arg("delta") = c_delta, py::arg("ds")=c_ds);
+
+     m.def("dist_to_gon", &dist_to_gon, py::arg("prim_a"), py::arg("prim_b"), py::arg("h"), py::arg("tol"), py::arg("p_A0"), py::arg("no_iter_max"));
+     //m.def("compute_comp_icuas", &compute_comp_icuas, py::arg("q"), py::arg("q_tg"), py::arg("T_tg"), py::arg("h"), py::arg("eps"));
+     m.def("icuas_gvf_vel", &icuas_gvf_vel, py::arg("q"), py::arg("q_tg"), py::arg("h"), py::arg("Kc"), py::arg("Kt"), py::arg("eps"));
+     m.def("icuas_gvf_acc", &icuas_gvf_acc, 
+          py::arg("q"), 
+          py::arg("dotq"), 
+          py::arg("obstacles"), 
+          py::arg("moving_obstacles"), 
+          py::arg("q_tg"), 
+          py::arg("h"), 
+          py::arg("Kc"), 
+          py::arg("Kt"), 
+          py::arg("tau_v"), 
+          py::arg("agent_radius"),  
+          py::arg("agent_height"), 
+          py::arg("r"), 
+          py::arg("eps_d"), 
+          py::arg("safe_dist"), 
+          py::arg("eta"),
+          py::arg("dist_delta"),
+          py::arg("moving_obstacle_radius"),
+          py::arg("eps"));
+
+
+
 }

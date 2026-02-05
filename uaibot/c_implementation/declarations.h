@@ -419,3 +419,55 @@ VectorXf solveQP(const MatrixXf& H,const VectorXf& f,const MatrixXf& A,const Vec
 
 VectorFieldResult vectorfield_SE3(const Eigen::Matrix4d& state, const vector<Eigen::Matrix4d>& curve, float kt1, float kt2, float kt3, float kn1, float kn2,
     const vector<Eigen::MatrixXd>& curve_derivative=std::vector<Eigen::MatrixXd>(), double delta=c_delta, double ds=c_ds);
+
+PrimDistResult dist_to_gon(GeometricPrimitives prim_a, GeometricPrimitives prim_b, float h, float tol, Vector3f p_A0, int no_iter_max);
+
+
+struct ICUASGVF { 
+    float D; 
+    float min_dist_obs;
+    vector<Vector3f> vec; 
+    int feasible;
+
+    vector<float> dist_am;
+    vector<float> dist_am_next;
+    vector<Vector3f> grad_am;
+    vector<Vector3f> grad_am_next;
+    vector<int> ind1_am;
+    vector<int> ind2_am;
+};
+
+// OutICUASComponents compute_comp_icuas(
+//     const std::vector<Eigen::Vector3f>& q,
+//     const std::vector<std::vector<Eigen::Vector3f>>& q_tg,
+//     const std::vector<std::vector<Eigen::Vector3f>>& T_tg,
+//     float h,
+//     float eps);
+
+ICUASGVF icuas_gvf_vel(
+    const std::vector<Eigen::Vector3f>& q,
+    const std::vector<std::vector<Eigen::Vector3f>>& q_tg,
+    float h,
+    float Kc,
+    float Kt,
+    float eps);
+
+ICUASGVF icuas_gvf_acc(
+    const std::vector<Eigen::Vector3f>& q,
+    const std::vector<Eigen::Vector3f>& dotq,
+    const std::vector<GeometricPrimitives>& obstacles,
+    const std::vector<std::vector<Eigen::Vector3f>>& moving_obstacles,
+    const std::vector<std::vector<Eigen::Vector3f>>& q_tg,
+    float h,
+    float Kc,
+    float Kt,
+    float tau_v,
+    float agent_radius,
+    float agent_height,
+    float r,
+    float eps_d,
+    float safe_dist,
+    float eta,
+    float dist_delta,
+    float moving_obstacle_radius,
+    float eps);
