@@ -60,8 +60,11 @@ def create_curve(no_agent, no_points):
     return q_tg
             
        
-def mov_obstacles_traj(t):
+def mov_obstacles_traj(t, no_moving_obstacles=False):
     
+    if no_moving_obstacles:
+        return [[np.matrix([0.0, 0.0, 0.0]).T, np.matrix([0.0, 0.0, 0.0]).T, np.matrix([0.0, 0.0, 0.0]).T]]
+        
     r1 = 4
     w1 = 0.75*1/8
     p1 = np.matrix([r1*np.sin(w1*t), 0.0, 3.5]).T
@@ -89,6 +92,7 @@ def mov_obstacles_traj(t):
 def main():    
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--save_name", type=str, default=None)
+    parser.add_argument("-n", "--no_moving_obstacles", action="store_true")
     args = parser.parse_args()
     
 
@@ -115,7 +119,7 @@ def main():
     param_eta=0.5
     param_dist_delta=0.003 #0.005
     param_moving_obstacle_radius = 0.3+0*0.45
-    param_time_sim = 20+0*120 
+    param_time_sim = 80 #20+0*120 
 
     colors=['red','green','blue','yellow','magenta','cyan','white','black']
 
@@ -166,7 +170,7 @@ def main():
     a_fun = lambda _q, _dotq, _t: ub_cpp.icuas_gvf_acc(q = _q, 
                                                 dotq = _dotq, 
                                                 obstacles = all_obstacles_cpp,
-                                                moving_obstacles = mov_obstacles_traj(_t),
+                                                moving_obstacles = mov_obstacles_traj(_t, args.no_moving_obstacles),
                                                 q_tg = q_tg, 
                                                 Kc=param_Kc, 
                                                 Kt=param_Kt, 
@@ -195,7 +199,8 @@ def main():
     agents = []
     agents_model = []
     all_moving_obstacles = []
-    no_moving_obs = len(mov_obstacles_traj(0))
+    no_moving_obs = len(mov_obstacles_traj(0, args.no_moving_obstacles))
+    print("no_moving_obs = " + str(no_moving_obs))
 
     for i in range(param_no_agent):
         agents.append(ub.Cylinder(radius=param_radius_agent,height=param_height_agent,color=colors[i],opacity=0.3))
@@ -207,8 +212,9 @@ def main():
     sim.add(agents)
     sim.add(agents_model)
     sim.add(all_obstacles)
-    sim.add(all_moving_obstacles)
-
+    if not args.no_moving_obstacles:
+        sim.add(all_moving_obstacles)
+    
     hist_q=[]
     hist_dotq=[]
     hist_a = []
@@ -237,7 +243,7 @@ def main():
         
 
         
-        print(str(percentage)+"%, D = "+str(round(out.D,3)))
+        print(str(percentage) + "%, D = " + str(round(out.D,3)), end='\r')
         hist_min_dist.append(out.min_dist_obs)
 
         hist_a.append([np.matrix(_v) for _v in out.vec[i]])
@@ -249,7 +255,7 @@ def main():
             agents[i].add_ani_frame(t,ub.Utils.trn(q[i]))
             agents_model[i].add_ani_frame(t,ub.Utils.trn(q[i]))
             
-        all_mov_obstacles_traj = mov_obstacles_traj(t)
+        all_mov_obstacles_traj = mov_obstacles_traj(t, args.no_moving_obstacles)
         
         for i in range(no_moving_obs):
             all_moving_obstacles[i].add_ani_frame(t,ub.Utils.trn(all_mov_obstacles_traj[i][0]))
@@ -261,12 +267,31 @@ def main():
 
     # save data
     cwd = os.getcwd()
-    with open(os.path.join(cwd, "data.pkl"), "wb") as f:
-        pickle.dump(data, f)
+    
 
     # save sim
-    sim.save(cwd,args.save_name)
-    sim.run()
+    # Determine the target directory where the sim will be saved
+    target_dir = cwd
+
+    # Count the number of .html files in the target directory
+    html_files = [f for f in os.listdir(target_dir) if f.endswith('.html')]
+    html_count = len(html_files)
+
+    # Pad with leading zeros (assume 2 digits, up to 99 files)
+    prefix = f"{html_count:02d}_"
+
+    # Prepend the number to the save_name
+    numbered_save_name = prefix + args.save_name
+
+    # Save the simulation with the new save name
+    sim.save(target_dir, numbered_save_name)
+
+    with open(os.path.join("data/", numbered_save_name + "_data.pkl"), "wb") as f:
+        pickle.dump(data, f)
+
+    print("Simulation saved as " + numbered_save_name + ".html")
+    print("Data saved as " + numbered_save_name + "_data.pkl")
+    # sim.run()
         
         
 if __name__ == "__main__":

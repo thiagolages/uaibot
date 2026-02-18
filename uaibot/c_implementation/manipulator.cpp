@@ -3385,7 +3385,7 @@ ICUASGVF icuas_gvf_acc(
     out.min_dist_obs = min_dist_obs;
 
 
-    cout<<"----END-----"<<std::endl;
+    // cout<<"----END-----"<<std::endl;
 
     return out;
 }
