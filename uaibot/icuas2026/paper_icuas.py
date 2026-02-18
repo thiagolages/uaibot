@@ -122,6 +122,8 @@ def main():
     param_time_sim = 80 #20+0*120 
 
     colors=['red','green','blue','yellow','magenta','cyan','white','black']
+    target_traj_colors = ['#aa4444', '#44aa44', '#4444aa', '#aaaa44', '#aa44aa', '#44aaaa', '#888888', '#666666']
+    target_traj_point_size = 0.015
 
     #Initial configuration
     q = []
@@ -199,12 +201,21 @@ def main():
     agents = []
     agents_model = []
     all_moving_obstacles = []
+    target_trajectories = []
     no_moving_obs = len(mov_obstacles_traj(0, args.no_moving_obstacles))
     print("no_moving_obs = " + str(no_moving_obs))
 
     for i in range(param_no_agent):
         agents.append(ub.Cylinder(radius=param_radius_agent,height=param_height_agent,color=colors[i],opacity=0.3))
         agents_model.append(ub.RigidObject([ub.Model3D(url="https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/CrazyFlie/crazyflie.obj",htm=ub.Utils.rotx(np.pi/2),scale=0.55)]))
+        traj_points = [q_tg[k][i] for k in range(param_no_points)]
+        target_trajectories.append(
+            ub.PointCloud(
+                points=traj_points,
+                size=target_traj_point_size,
+                color=target_traj_colors[i]
+            )
+        )
 
     for i in range(no_moving_obs):
         all_moving_obstacles.append(ub.Ball(radius=param_moving_obstacle_radius, color='gray'))
@@ -212,6 +223,7 @@ def main():
     sim.add(agents)
     sim.add(agents_model)
     sim.add(all_obstacles)
+    sim.add(target_trajectories)
     if not args.no_moving_obstacles:
         sim.add(all_moving_obstacles)
     
@@ -240,7 +252,6 @@ def main():
         hist_q.append([np.matrix(_v) for _v in q])
         hist_dotq.append([np.matrix(_v) for _v in dotq])
         
-        
 
         
         print(str(percentage) + "%, D = " + str(round(out.D,3)), end='\r')
@@ -263,7 +274,7 @@ def main():
 
     ##
 
-    data=[hist_t, hist_q, hist_dotq, hist_a, hist_min_dist, hist_feasible]
+    data=[hist_t, hist_q, hist_dotq, hist_a, hist_min_dist, hist_feasible, q_tg]
 
     # save data
     cwd = os.getcwd()
@@ -274,8 +285,8 @@ def main():
     target_dir = cwd
 
     # Count the number of .html files in the target directory
-    html_files = [f for f in os.listdir(target_dir) if f.endswith('.html')]
-    html_count = len(html_files)
+    folders = [f for f in os.listdir(target_dir) if os.path.isdir(os.path.join(target_dir, f))]
+    html_count = len(folders)
 
     # Pad with leading zeros (assume 2 digits, up to 99 files)
     prefix = f"{html_count:02d}_"
@@ -283,10 +294,17 @@ def main():
     # Prepend the number to the save_name
     numbered_save_name = prefix + args.save_name
 
-    # Save the simulation with the new save name
-    sim.save(target_dir, numbered_save_name)
+    save_path = os.path.join(target_dir, numbered_save_name)
 
-    with open(os.path.join("data/", numbered_save_name + "_data.pkl"), "wb") as f:
+    print("Numbered save name: " + numbered_save_name)
+    print("Save path: " + save_path)
+
+    os.makedirs(save_path, exist_ok=True)
+
+    # Save the simulation with the new save name
+    sim.save(save_path, numbered_save_name)
+
+    with open(os.path.join(save_path, numbered_save_name + "_data.pkl"), "wb") as f:
         pickle.dump(data, f)
 
     print("Simulation saved as " + numbered_save_name + ".html")
