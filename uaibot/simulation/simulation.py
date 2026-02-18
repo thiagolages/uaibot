@@ -996,7 +996,7 @@ class Simulation:
                             'http://localhost:'+self.local_host_port+'/Scripts/threejs/geometries/ParametricGeometry.js', 
                             string)
             
-            string = re.sub('https://cdn.skypack.dev/dat.gui',
+            string = re.sub('https://esm.sh/dat.gui@0.7.9',
                             'http://localhost:'+self.local_host_port+'/Scripts/dat.gui.module.js', 
                             string)
             

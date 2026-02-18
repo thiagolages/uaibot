@@ -1,21 +1,38 @@
 import {
-	Object3D, Vector3, BoxBufferGeometry, Color, Mesh, MeshBasicMaterial, PerspectiveCamera, OrthographicCamera,
-	Scene, WebGLRenderer, AmbientLight, DirectionalLight, HemisphereLight, MeshStandardMaterial,
-	AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, ConeGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
-	BackSide, DoubleSide, PMREMGenerator, TextureLoader, PointLight, UVMapping, CubeReflectionMapping, CubeRefractionMapping,
-	EquirectangularReflectionMapping, EquirectangularRefractionMapping, CubeUVReflectionMapping,
-	CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping,
-	NearestFilter, LinearFilter, NearestMipmapNearestFilter, NearestMipmapLinearFilter, LinearMipmapNearestFilter,
-	LinearMipmapLinearFilter, BufferGeometry, Float32BufferAttribute, PointsMaterial, Points, ArrowHelper, TextGeometry, CubeTextureLoader, sRGBEncoding
+	ArrowHelper,
+	BoxBufferGeometry,
+	BufferGeometry,
+	Color,
+	ConeGeometry,
+	CubeTextureLoader,
+	CylinderBufferGeometry,
+	Float32BufferAttribute,
+	GridHelper,
+	Group,
+	HemisphereLight,
+	LoadingManager,
+	Mesh,
+	Object3D,
+	OrthographicCamera,
+	PerspectiveCamera,
+	PMREMGenerator,
+	PointLight,
+	Points,
+	PointsMaterial,
+	Scene,
+	SphereBufferGeometry,
+	sRGBEncoding,
+	Vector3,
+	WebGLRenderer
 } from 'https://cdn.skypack.dev/three@0.135.0/build/three.module.js';
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/controls/OrbitControls.js';
+import { ParametricGeometry } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/geometries/ParametricGeometry.js';
+import { ColladaLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/ColladaLoader.js';
+import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader.js';
+import { MTLLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/OBJLoader.js';
 import { STLLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/STLLoader.js';
-import { MTLLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/MTLLoader.js';
-import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/GLTFLoader.js';
-import { ColladaLoader } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/ColladaLoader.js';
-import { GUI } from 'https://cdn.skypack.dev/dat.gui';
-import { ParametricGeometry } from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/geometries/ParametricGeometry.js'
+import { GUI } from 'https://esm.sh/dat.gui@0.7.9';
 
 
 //--------------------SIMULATION ELEMENTS---------------------
